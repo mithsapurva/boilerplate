@@ -1,11 +1,25 @@
 {
   "ReRoutes": [
     {
-      "DownstreamPathTemplate": "/api/values",
+      "DownstreamPathTemplate": "/api/user/{everything}",
       "DownstreamScheme": "http",
-      "UseServiceDiscovery": true,
-      "ServiceName": "claimservice",
-      "UpstreamPathTemplate": "/claim-api/{catchAll}",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port":  54395
+        }
+      ],
+      //"UseServiceDiscovery": true,
+      //"ServiceName": "userservice",
+      "UpstreamPathTemplate": "/user-api/{catchAll}",
+      "SwaggerKey": "user",
+      "UpstreamHeaderTransfomr": {
+        "X-Forwarded-For": "{RemoteIpAddress}"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "myproject",
+        "AllowedScopes": []
+      },
       "QoSOptions": {
         "ExceptionsAllowedBeforeBreaking": 2,
         "DurationOfBreak": 60000,
@@ -14,6 +28,16 @@
       "LoadBalancerOptions": {
         "Type": "RoundRobin"
       }
+    },
+    {
+      "Key": "user",
+      "Config": [
+        {
+          "Name": "User API",
+          "Version": "v1",
+          "Url": ""
+        }
+      ]
     },
     {
       "DownstreamPathTemplate": "/api/values",
@@ -33,12 +57,17 @@
     }
   ],
   "GlobalConfiguration": {
-    "UseServiceDiscovery": true,
-    "ServiceDiscoveryProvider": {
-      "Type": "Eureka",
-      "Host": "localhost",
-      "Port": "8761"
-    },
+    //"UseServiceDiscovery": true,
+    //"ServiceDiscoveryProvider": {
+    //  "Type": "Eureka",
+    //  "Host": "localhost",
+    //  "Port": "8761"
+    //},
+    //Add start
+    "RequestIdKey": "X-Correlation-Id",
+    "AdministrationPath": "/administration"
+    //Add end
+
     "RateLimitOptions": {
       "DisableRateLimitHeaders": false,
       "QuotaExceededMessage": "Hey, you request too many times, slow down!!!",
